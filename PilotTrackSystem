@@ -1,0 +1,98 @@
+#include <iostream>
+#include <cctype>
+#include <cstring>
+using namespace std;
+
+struct Flight {
+
+   char flightCode[10];
+   int durationMinutes;
+};
+
+class Pilot {
+private: 
+
+     char name[30];
+     Flight logs[6];
+     int count;
+
+public:
+
+    Pilot();
+    void addFlight(const Flight& f);
+    int totalMinutes() const;
+    void print() const;
+
+    friend void readPilot(Pilot& p);
+};
+
+void readFlight(Flight& f) {
+
+    cout << "Enter the flight code and duration: ";
+    cin >> f.flightCode >> f.durationMinutes;
+
+}
+
+void readPilot(Pilot& p) {
+    cout << "Enter pilot name: ";
+    cin >> p.name;
+
+    for (int i = 0; i < 3; i++) {
+        Flight f;
+        readFlight(f);
+        p.addFlight(f);
+    }
+}
+
+Pilot::Pilot() {
+    count = 0;
+
+}
+
+void Pilot::addFlight(const Flight& f) {
+    if (count == 6) {
+        return;
+
+    }
+    logs[count] = f;
+    count++;
+}
+
+int Pilot::totalMinutes() const {
+    int total = 0;
+    for (int i = 0; i < count; i++) {
+        total += logs[i].durationMinutes;
+    }
+    return total;
+}
+
+void Pilot::print() const {
+    cout << name << " - Total minutes: " << totalMinutes() << endl;
+
+}
+
+int main() {
+    int n;
+    cout << "Numbwe of pilots?: ";
+    cin >> n;
+
+    Pilot* list = new Pilot[n];
+
+    for (int i = 0; i < n; i++) {
+        cout << "-- Pilot " << i + 1 << " --\n";
+        readPilot(list[i]);
+    }
+
+    int maxIndex = 0;
+    for (int i = 1; i < n; i ++) {
+        if (list[i].totalMinutes() > list[maxIndex].totalMinutes()) {
+            maxIndex = i;
+        }
+    }
+
+    cout << " Top pilot -> ";
+    list[maxIndex].print();
+
+    delete[] list;
+    return 0;
+}
